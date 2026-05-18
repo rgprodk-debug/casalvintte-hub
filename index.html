@@ -3677,10 +3677,10 @@ let _activeNoteEditor = null;
 
 // Labels editáveis do calendário: state.calLabels = [ {id, name, color} ]
 const DEFAULT_CAL_LABELS = [
-  { id: 'l1', name: 'Parceria', color: '#c3a576' },
-  { id: 'l2', name: 'Pessoal',  color: '#8aab9a' },
-  { id: 'l3', name: 'Trabalho', color: '#8fa3c2' },
-  { id: 'l4', name: 'Lazer',    color: '#a299c2' },
+  { id: 'l1', name: 'Parceria', color: '#f59e0b' },  // âmbar vibrante
+  { id: 'l2', name: 'Pessoal',  color: '#22c55e' },  // verde vibrante
+  { id: 'l3', name: 'Trabalho', color: '#3b82f6' },  // azul vibrante
+  { id: 'l4', name: 'Lazer',    color: '#a855f7' },  // roxo vibrante
 ];
 
 function getCalLabels() {
@@ -3703,7 +3703,7 @@ function renderCalLabelPalette(kind) {
         draggable="true"
         data-label-id="${lb.id}"
         data-kind="${kind}"
-        style="background:${lb.color}20;color:${lb.color};border:1px solid ${lb.color}40;"
+        style="background:${lb.color};color:#0c0c0c;border:1px solid ${lb.color};font-weight:700;"
         title="Arraste para um dia · ${escapeHtml(lb.name)}">${escapeHtml(lb.name)}</span>
     `).join('')}
     <button class="btn ghost sm" style="font-size:10px;padding:3px 10px;margin-left:auto;" onclick="openCalLabelEditor()"><i class="ti ti-edit"></i>Editar etiquetas</button>
@@ -3739,7 +3739,19 @@ function openCalLabelEditor() {
         </div>`).join('')}
     </div>
     <button class="btn sm" style="margin-top:8px;" onclick="addCalLabel()"><i class="ti ti-plus"></i>Nova etiqueta</button>
+    <button class="btn ghost sm" style="margin-top:8px;margin-left:6px;" onclick="applyVibrantColors()"><i class="ti ti-palette"></i>Aplicar cores vibrantes</button>
   `);
+}
+function applyVibrantColors() {
+  // Aplica a paleta vibrante padrão às etiquetas existentes na ordem em que aparecem
+  const vibrant = ['#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ef4444', '#06b6d4', '#ec4899', '#84cc16'];
+  const arr = getCalLabels();
+  arr.forEach((lb, i) => { lb.color = vibrant[i % vibrant.length]; });
+  save();
+  openCalLabelEditor();
+  renderAllCalLabelPalettes();
+  renderCalendar('casalvintte');
+  renderCalendar('general');
 }
 function updateCalLabel(id, field, value) {
   const lb = getCalLabels().find(x => x.id === id);
@@ -3752,7 +3764,11 @@ function updateCalLabel(id, field, value) {
   }
 }
 function addCalLabel() {
-  getCalLabels().push({ id: uid(), name: 'Etiqueta', color: '#a299c2' });
+  // Próxima cor vibrante disponível
+  const vibrant = ['#f59e0b', '#22c55e', '#3b82f6', '#a855f7', '#ef4444', '#06b6d4', '#ec4899', '#84cc16'];
+  const used = new Set(getCalLabels().map(l => l.color));
+  const nextColor = vibrant.find(c => !used.has(c)) || vibrant[getCalLabels().length % vibrant.length];
+  getCalLabels().push({ id: uid(), name: 'Etiqueta', color: nextColor });
   save();
   openCalLabelEditor();
   renderAllCalLabelPalettes();
@@ -3799,8 +3815,8 @@ function renderCalendar(kind) {
         <div class="num">${d}</div>
         ${dayEvents.length ? '<div class="events">' + dayEvents.slice(0,2).map(ev => {
           const lb = ev.labelId ? getCalLabels().find(x => x.id === ev.labelId) : null;
-          const dot = lb ? `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${lb.color};margin-right:3px;flex-shrink:0;"></span>` : '';
-          return `<div class="cal-event ${ev.type||'personal'}" style="${lb?`border-left:2px solid ${lb.color};`:''}">${dot}${ev.time?ev.time+' ':''}${escapeHtml(ev.title)}</div>`;
+          const dot = lb ? `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${lb.color};margin-right:4px;flex-shrink:0;box-shadow:0 0 0 1px rgba(0,0,0,0.3);"></span>` : '';
+          return `<div class="cal-event ${ev.type||'personal'}" style="${lb?`border-left:3px solid ${lb.color};`:''}">${dot}${ev.time?ev.time+' ':''}${escapeHtml(ev.title)}</div>`;
         }).join('') + (dayEvents.length > 2 ? `<div class="cal-event">+${dayEvents.length-2}</div>` : '') + '</div>' : ''}
         ${hasNote ? `<div class="cal-note-inline">${escapeHtml(note)}</div>` : ''}
       </div>`;
@@ -4004,11 +4020,15 @@ function openEventModal(kind, iso) {
       <ul class="simple-list" style="margin-bottom:14px;">
         ${existing.map(ev => {
           const lb = ev.labelId ? labels.find(x => x.id === ev.labelId) : null;
+          const liLabelOpts = `<option value="">— sem etiqueta —</option>` + labels.map(x =>
+            `<option value="${x.id}" ${ev.labelId === x.id ? 'selected' : ''}>${x.name}</option>`).join('');
           return `
-          <li>
-            <span class="text">${ev.time?`<strong style="color:var(--amber)">${ev.time}</strong> · `:''}${escapeHtml(ev.title)}</span>
-            ${lb ? `<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:${lb.color}20;color:${lb.color};border:1px solid ${lb.color}40;font-family:var(--font-mono);">${lb.name}</span>` : ''}
-            <button class="btn-icon danger" onclick="deleteCalEvent('${kind}','${iso}','${ev.id}')"><i class="ti ti-trash"></i></button>
+          <li style="align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="text" style="flex:1;min-width:140px;">${ev.time?`<strong style="color:var(--amber)">${ev.time}</strong> · `:''}${escapeHtml(ev.title)}</span>
+            ${lb ? `<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:${lb.color};color:#0c0c0c;border:1px solid ${lb.color};font-family:var(--font-mono);font-weight:700;">${lb.name}</span>` : `<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:var(--bg-3);color:var(--text-4);border:1px solid var(--border);font-family:var(--font-mono);">sem etiqueta</span>`}
+            <select class="inline-input" style="font-size:10px;padding:2px 6px;max-width:140px;" onchange="updateEventLabel('${kind}','${iso}','${ev.id}',this.value)" title="Trocar etiqueta">${liLabelOpts}</select>
+            ${ev.labelId ? `<button class="btn-icon" onclick="updateEventLabel('${kind}','${iso}','${ev.id}','')" title="Remover etiqueta"><i class="ti ti-tag-off"></i></button>` : ''}
+            <button class="btn-icon danger" onclick="deleteCalEvent('${kind}','${iso}','${ev.id}')" title="Excluir evento"><i class="ti ti-trash"></i></button>
           </li>`;}).join('')}
       </ul>
     `}
@@ -4045,6 +4065,20 @@ function deleteCalEvent(kind, iso, id) {
   if (events[iso].length === 0) delete events[iso];
   save();
   closeModal();
+  renderCalendar(kind);
+  if (kind === 'general') renderUpcoming();
+}
+
+// Atualizar a etiqueta de um evento (passar '' pra remover)
+function updateEventLabel(kind, iso, id, newLabelId) {
+  const events = kind === 'casalvintte' ? state.casalvintte.calendarEvents : state.generalEvents;
+  if (!events[iso]) return;
+  const ev = events[iso].find(e => e.id === id);
+  if (!ev) return;
+  ev.labelId = newLabelId || null;
+  save();
+  // Reabrir o modal pra refletir a mudança imediatamente
+  openEventModal(kind, iso);
   renderCalendar(kind);
   if (kind === 'general') renderUpcoming();
 }
