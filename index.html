@@ -913,6 +913,7 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
 .cal-event {
   font-size: 10px;
   padding: 2px 5px;
+  padding-right: 18px;
   border-radius: 3px;
   background: var(--purple-soft);
   color: var(--purple);
@@ -922,9 +923,37 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
   border-left: 2px solid var(--purple);
   font-family: var(--font-mono);
   letter-spacing: 0.02em;
+  position: relative;
 }
 .cal-event.casalvintte { background: var(--amber-soft); color: var(--amber); border-left-color: var(--amber); }
 .cal-event.partnership { background: var(--amber-soft); color: var(--amber); border-left-color: var(--amber); }
+
+/* Botão X (apagar) dentro do evento na célula do dia */
+.cal-event-x {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: rgba(0,0,0,0.25);
+  color: var(--text-2);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 0;
+  opacity: 0;
+  transition: all .12s ease;
+}
+.cal-event:hover .cal-event-x { opacity: 1; }
+.cal-event-x:hover {
+  background: #ef4444;
+  color: #fff;
+}
 .cal-day .dot-indicator {
   position: absolute;
   top: 6px;
@@ -1704,6 +1733,32 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
   letter-spacing: 0.1em;
   cursor: default;
   white-space: nowrap;
+}
+/* Etiqueta + botão lixinho lado a lado */
+.cal-label-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.cal-label-del {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-3);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  transition: all .12s ease;
+}
+.cal-label-del:hover {
+  color: #fff;
+  background: #ef4444;
+  border-color: #ef4444;
 }
 /* Daily goals done state */
 #list-daily-goals li.done input[type="text"] { text-decoration: line-through; color: var(--text-4); }
@@ -3696,15 +3751,18 @@ function renderCalLabelPalette(kind) {
   pal.innerHTML = `
     <div class="palette-hint">
       <i class="ti ti-drag-drop"></i>
-      <span>Arraste uma etiqueta para um dia do calendário · ou clique em "Editar" pra mudar nome e cor</span>
+      <span>Arraste uma etiqueta para um dia do calendário · clique no <i class="ti ti-trash" style="font-size:11px;"></i> pra apagar · ou em "Editar" pra mudar nome e cor</span>
     </div>
     ${labels.map(lb => `
-      <span class="cal-label-chip draggable"
-        draggable="true"
-        data-label-id="${lb.id}"
-        data-kind="${kind}"
-        style="background:${lb.color};color:#0c0c0c;border:1px solid ${lb.color};font-weight:700;"
-        title="Arraste para um dia · ${escapeHtml(lb.name)}">${escapeHtml(lb.name)}</span>
+      <span class="cal-label-pair">
+        <span class="cal-label-chip draggable"
+          draggable="true"
+          data-label-id="${lb.id}"
+          data-kind="${kind}"
+          style="background:${lb.color};color:#0c0c0c;border:1px solid ${lb.color};font-weight:700;"
+          title="Arraste para um dia · ${escapeHtml(lb.name)}">${escapeHtml(lb.name)}</span>
+        <button class="cal-label-del" onclick="quickDeleteLabel('${lb.id}')" title="Apagar etiqueta ${escapeAttr(lb.name)}"><i class="ti ti-trash"></i></button>
+      </span>
     `).join('')}
     <button class="btn ghost sm" style="font-size:10px;padding:3px 10px;margin-left:auto;" onclick="openCalLabelEditor()"><i class="ti ti-edit"></i>Editar etiquetas</button>
   `;
@@ -3722,6 +3780,27 @@ function renderCalLabelPalette(kind) {
       document.querySelectorAll('.cal-day.drag-over').forEach(d => d.classList.remove('drag-over'));
     });
   });
+}
+
+// Apaga etiqueta direto da paleta + limpa de todos os eventos
+function quickDeleteLabel(id) {
+  const arr = getCalLabels();
+  const lb = arr.find(x => x.id === id);
+  if (!lb) return;
+  if (!confirm('Apagar a etiqueta "' + lb.name + '"? Ela será removida de todos os eventos que a usavam (os eventos continuam existindo, só ficam sem etiqueta).')) return;
+  const idx = arr.findIndex(x => x.id === id);
+  if (idx >= 0) arr.splice(idx, 1);
+  // Limpa labelId dos eventos
+  [state.casalvintte.calendarEvents, state.generalEvents].forEach(coll => {
+    if (!coll) return;
+    Object.values(coll).forEach(dayArr => {
+      dayArr.forEach(ev => { if (ev.labelId === id) ev.labelId = null; });
+    });
+  });
+  save();
+  renderAllCalLabelPalettes();
+  renderCalendar('casalvintte');
+  renderCalendar('general');
 }
 
 function openCalLabelEditor() {
@@ -3816,7 +3895,7 @@ function renderCalendar(kind) {
         ${dayEvents.length ? '<div class="events">' + dayEvents.slice(0,2).map(ev => {
           const lb = ev.labelId ? getCalLabels().find(x => x.id === ev.labelId) : null;
           const dot = lb ? `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${lb.color};margin-right:4px;flex-shrink:0;box-shadow:0 0 0 1px rgba(0,0,0,0.3);"></span>` : '';
-          return `<div class="cal-event ${ev.type||'personal'}" style="${lb?`border-left:3px solid ${lb.color};`:''}">${dot}${ev.time?ev.time+' ':''}${escapeHtml(ev.title)}</div>`;
+          return `<div class="cal-event ${ev.type||'personal'}" data-ev-id="${ev.id}" style="${lb?`border-left:3px solid ${lb.color};`:''}">${dot}${ev.time?ev.time+' ':''}${escapeHtml(ev.title)}<button class="cal-event-x" onclick="event.stopPropagation();quickDeleteEvent('${kind}','${iso}','${ev.id}')" title="Apagar etiqueta deste dia"><i class="ti ti-x"></i></button></div>`;
         }).join('') + (dayEvents.length > 2 ? `<div class="cal-event">+${dayEvents.length-2}</div>` : '') + '</div>' : ''}
         ${hasNote ? `<div class="cal-note-inline">${escapeHtml(note)}</div>` : ''}
       </div>`;
@@ -4065,6 +4144,17 @@ function deleteCalEvent(kind, iso, id) {
   if (events[iso].length === 0) delete events[iso];
   save();
   closeModal();
+  renderCalendar(kind);
+  if (kind === 'general') renderUpcoming();
+}
+
+// Apagar evento direto do dia (clique no X), sem abrir modal
+function quickDeleteEvent(kind, iso, id) {
+  const events = kind === 'casalvintte' ? state.casalvintte.calendarEvents : state.generalEvents;
+  if (!events[iso]) return;
+  events[iso] = events[iso].filter(e => e.id !== id);
+  if (events[iso].length === 0) delete events[iso];
+  save();
   renderCalendar(kind);
   if (kind === 'general') renderUpcoming();
 }
