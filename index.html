@@ -585,8 +585,22 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
 /* ============================================================
    ROTINAS
    ============================================================ */
-.routine-table .time-cell { width: 110px; font-weight: 600; color: var(--amber); font-variant-numeric: tabular-nums; }
-.routine-table .check-cell { width: 50px; text-align: center; }
+.routine-table .time-cell { width: 100px; font-weight: 600; color: var(--amber); font-variant-numeric: tabular-nums; }
+.routine-table .check-cell { width: 44px; text-align: center; }
+
+/* Versão compacta — mais densa, menos altura */
+.routine-table.compact { font-size: 13px; }
+.routine-table.compact th { padding: 8px 10px; font-size: 10px; }
+.routine-table.compact td { padding: 6px 10px; }
+.routine-table.compact .time-cell { width: 92px; font-size: 12px; }
+.routine-table.compact .inline-input { font-size: 13px; padding: 4px 6px; }
+.routine-table.compact .check-cell { width: 40px; }
+
+/* Indicador de semana do mês ativo no grid */
+#routine-week-grid .week-day-cell.current-week-day {
+  outline: 1px solid rgba(195,165,118,0.4);
+  outline-offset: -1px;
+}
 
 .checkbox {
   appearance: none;
@@ -1373,6 +1387,120 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
 }
 .goal-cover .img-slot { border-radius: var(--radius) var(--radius) 0 0; border-bottom: 1px solid var(--border); width: 100%; height: 100%; }
 
+/* ============================================================
+   PARCERIAS — Estilo Trello (3 colunas horizontais)
+   ============================================================ */
+.partner-trello {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .partner-trello { grid-template-columns: 1fr; }
+}
+.partner-trello-col {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 120px;
+}
+.partner-trello-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 4px 10px 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.partner-trello-title {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.partner-trello-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-4);
+  background: var(--bg-3);
+  padding: 1px 7px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+}
+.partner-trello-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.partner-trello-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-4);
+  border-radius: 6px;
+  padding: 7px 9px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .15s ease;
+  cursor: default;
+  min-height: 30px;
+}
+.partner-trello-card:hover { border-color: var(--border-hi); background: var(--bg-3); }
+.partner-trello-card.kind-done     { border-left-color: var(--green); }
+.partner-trello-card.kind-todo     { border-left-color: var(--amber); }
+.partner-trello-card.kind-prospect { border-left-color: var(--blue); }
+.partner-trello-card .ptc-name {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  caret-color: var(--amber);
+}
+.partner-trello-card .ptc-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.partner-trello-card:hover .ptc-actions { opacity: 1; }
+.partner-trello-card .ptc-move,
+.partner-trello-card .ptc-delete {
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-4);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all .15s;
+  font-size: 11px;
+  padding: 0;
+}
+.partner-trello-card .ptc-move:hover { color: var(--text-2); background: var(--bg-3); }
+.partner-trello-card .ptc-delete:hover { color: var(--red); background: var(--red-soft); }
+.partner-trello-empty {
+  color: var(--text-4);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 12px;
+  text-align: center;
+  padding: 14px 4px;
+}
+
 /* Partnership row with photo */
 .partner-row {
   display: flex;
@@ -1814,24 +1942,43 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
     <button class="subnav-btn" data-routine="rafa">Rafa</button>
   </div>
 
-  <!-- Semanas do mês -->
-  <div class="card mb-16">
+  <!-- Filtro por semana do mês + indicadores -->
+  <div class="card mb-16" style="padding:14px 18px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <i class="ti ti-calendar-month" style="color:var(--amber);font-size:18px;"></i>
+        <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);">Semana do mês</span>
+        <span style="font-family:var(--font-serif);font-style:italic;font-size:14px;color:var(--text);" id="routine-month-label"></span>
+      </div>
+      <div class="chips" id="routine-week-of-month-filter" style="gap:4px;">
+        <button class="chip active" data-wm="current">Semana atual</button>
+        <button class="chip" data-wm="1">1ª</button>
+        <button class="chip" data-wm="2">2ª</button>
+        <button class="chip" data-wm="3">3ª</button>
+        <button class="chip" data-wm="4">4ª</button>
+        <button class="chip" data-wm="5">5ª</button>
+        <button class="chip" data-wm="all">Todas</button>
+      </div>
+    </div>
+    <!-- Grade por dias da semana -->
+    <div id="routine-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;"></div>
+  </div>
+
+  <!-- Quadro de rotina compacto -->
+  <div class="card mb-16" style="padding:16px 18px;">
     <div class="flex-between mb-16">
-      <h2 class="section-title" style="margin:0"><i class="ti ti-clock-hour-5"></i><span id="routine-name">Rotina da Duda</span></h2>
+      <h2 class="section-title" style="margin:0;font-size:15px;"><i class="ti ti-clock-hour-5"></i><span id="routine-name">Rotina da Duda</span></h2>
       <div style="display:flex;gap:8px;align-items:center;">
-        <div class="chips" id="routine-week-filter">
-          <button class="chip active" data-week="all">Todos os dias</button>
+        <div class="chips" id="routine-week-filter" style="gap:4px;">
+          <button class="chip active" data-week="all">Todos</button>
           <button class="chip" data-week="1,2,3,4,5">Seg–Sex</button>
-          <button class="chip" data-week="6,0">Fim de semana</button>
+          <button class="chip" data-week="6,0">Fds</button>
         </div>
         <button class="btn sm" onclick="addRoutineRow()"><i class="ti ti-plus"></i>Adicionar</button>
       </div>
     </div>
 
-    <!-- Grade por dias da semana -->
-    <div id="routine-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px;"></div>
-
-    <table class="editable-table routine-table" id="tbl-routine"></table>
+    <table class="editable-table routine-table compact" id="tbl-routine"></table>
   </div>
 
   <!-- Metas diárias -->
@@ -1864,7 +2011,7 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
     <div class="kanban" id="kanban"></div>
   </div>
 
-  <!-- Parcerias visuais -->
+  <!-- Parcerias estilo Trello -->
   <div class="card mb-16">
     <div class="flex-between mb-16">
       <h2 class="section-title" style="margin:0"><i class="ti ti-handshake" style="color:var(--amber)"></i>Parcerias</h2>
@@ -1876,38 +2023,42 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
       </div>
     </div>
 
-    <!-- Seções por categoria -->
-    <div class="partner-section" data-psection="done">
-      <div class="partner-col-header">
-        <h2 class="section-title" style="margin:0; font-size:16px;"><i class="ti ti-check" style="color:var(--green)"></i>Parcerias feitas</h2>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="partner-col-count" id="count-done">0</span>
-          <button class="btn sm" onclick="addPartnerCard('done')"><i class="ti ti-plus"></i>Adicionar</button>
+    <div class="partner-trello" id="partner-trello">
+      <div class="partner-section partner-trello-col" data-psection="done">
+        <div class="partner-trello-header">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+            <i class="ti ti-check" style="color:var(--green);font-size:14px;"></i>
+            <span class="partner-trello-title">Feitas</span>
+            <span class="partner-trello-count" id="count-done">0</span>
+          </div>
+          <button class="btn-icon" onclick="addPartnerCard('done')" title="Adicionar"><i class="ti ti-plus"></i></button>
         </div>
+        <div class="partner-trello-list" id="grid-done"></div>
       </div>
-      <div class="partner-cards-grid" id="grid-done"></div>
-    </div>
 
-    <div class="partner-section" data-psection="todo" style="margin-top:28px; padding-top:22px; border-top:1px solid var(--border);">
-      <div class="partner-col-header">
-        <h2 class="section-title" style="margin:0; font-size:16px;"><i class="ti ti-map-pin" style="color:var(--amber)"></i>Para gravar</h2>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="partner-col-count" id="count-todo">0</span>
-          <button class="btn sm" onclick="addPartnerCard('todo')"><i class="ti ti-plus"></i>Adicionar</button>
+      <div class="partner-section partner-trello-col" data-psection="todo">
+        <div class="partner-trello-header">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+            <i class="ti ti-map-pin" style="color:var(--amber);font-size:14px;"></i>
+            <span class="partner-trello-title">Para gravar</span>
+            <span class="partner-trello-count" id="count-todo">0</span>
+          </div>
+          <button class="btn-icon" onclick="addPartnerCard('todo')" title="Adicionar"><i class="ti ti-plus"></i></button>
         </div>
+        <div class="partner-trello-list" id="grid-todo"></div>
       </div>
-      <div class="partner-cards-grid" id="grid-todo"></div>
-    </div>
 
-    <div class="partner-section" data-psection="prospect" style="margin-top:28px; padding-top:22px; border-top:1px solid var(--border);">
-      <div class="partner-col-header">
-        <h2 class="section-title" style="margin:0; font-size:16px;"><i class="ti ti-search" style="color:var(--blue)"></i>Prospecção</h2>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="partner-col-count" id="count-prospect">0</span>
-          <button class="btn sm" onclick="addPartnerCard('prospect')"><i class="ti ti-plus"></i>Adicionar</button>
+      <div class="partner-section partner-trello-col" data-psection="prospect">
+        <div class="partner-trello-header">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+            <i class="ti ti-search" style="color:var(--blue);font-size:14px;"></i>
+            <span class="partner-trello-title">Prospecção</span>
+            <span class="partner-trello-count" id="count-prospect">0</span>
+          </div>
+          <button class="btn-icon" onclick="addPartnerCard('prospect')" title="Adicionar"><i class="ti ti-plus"></i></button>
         </div>
+        <div class="partner-trello-list" id="grid-prospect"></div>
       </div>
-      <div class="partner-cards-grid" id="grid-prospect"></div>
     </div>
   </div>
 
@@ -2158,6 +2309,7 @@ const defaultState = () => ({
       rafa: [],
     },
     lastReset: todayISO(),
+    lastMonth: todayISO().slice(0,7),
   },
   casalvintte: {
     kanban: {
@@ -2234,6 +2386,7 @@ const defaultState = () => ({
     personalGoal: 'duda',
     finMonth: todayISO().slice(0,7),
     routineWeek: 'all',
+    routineWeekOfMonth: 'current',
     casalvintteMonth: todayISO().slice(0,7),
     generalMonth: todayISO().slice(0,7),
   },
@@ -2845,6 +2998,7 @@ document.querySelectorAll('#routine-subnav .subnav-btn').forEach(b => {
 })();
 
 const DOW_LABELS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const MONTHS_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 
 // Filtro de semana na rotina
 document.querySelectorAll('#routine-week-filter .chip').forEach(c => {
@@ -2857,9 +3011,33 @@ document.querySelectorAll('#routine-week-filter .chip').forEach(c => {
   });
 });
 
+// Filtro semana do mês (novo)
+document.querySelectorAll('#routine-week-of-month-filter .chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('#routine-week-of-month-filter .chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    state.ui.routineWeekOfMonth = c.dataset.wm;
+    save();
+    renderRoutine();
+  });
+});
+
+// Restaurar filtros ativos a partir do estado
+(function restoreRoutineFilters() {
+  const wk = state.ui.routineWeek || 'all';
+  document.querySelectorAll('#routine-week-filter .chip').forEach(x => x.classList.toggle('active', x.dataset.week === wk));
+  const wm = state.ui.routineWeekOfMonth || 'current';
+  document.querySelectorAll('#routine-week-of-month-filter .chip').forEach(x => x.classList.toggle('active', x.dataset.wm === wm));
+})();
+
 function getRoutineWeekFilter() {
   const active = document.querySelector('#routine-week-filter .chip.active');
   return active ? active.dataset.week : 'all';
+}
+
+function getRoutineWeekOfMonth() {
+  const active = document.querySelector('#routine-week-of-month-filter .chip.active');
+  return active ? active.dataset.wm : 'current';
 }
 
 // Obter semana do mês (1 a 5)
@@ -2868,10 +3046,61 @@ function getWeekOfMonth(date) {
   return Math.ceil((date.getDate() + firstDay) / 7);
 }
 
+// Calcula as datas da semana do mês selecionada
+function getDatesForWeekOfMonth(year, month, weekNumber) {
+  // month é 0-indexed
+  const result = [];
+  const firstDay = new Date(year, month, 1);
+  const firstDayOfWeek = firstDay.getDay(); // 0=dom
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Dia 1 do mês cai em qual posição? Se domingo, está na semana 1.
+  // Determina dia inicial da semana N
+  // Semana 1 começa no dia 1; semana 2 começa no primeiro domingo após
+  let weekStart;
+  if (weekNumber === 1) {
+    weekStart = 1;
+  } else {
+    // Quantos dias do início até o fim da semana 1?
+    const daysInWeek1 = 7 - firstDayOfWeek;
+    weekStart = daysInWeek1 + 1 + (weekNumber - 2) * 7;
+  }
+
+  for (let i = 0; i < 7; i++) {
+    const day = weekStart + i;
+    if (day < 1 || day > daysInMonth) {
+      result.push(null);
+    } else {
+      result.push(new Date(year, month, day));
+    }
+  }
+  return result;
+}
+
 function renderRoutineWeekGrid(who) {
   const grid = document.getElementById('routine-week-grid');
   if (!grid) return;
   const items = state.routines[who] || [];
+  const wm = getRoutineWeekOfMonth();
+  const today = new Date();
+  const todayDow = today.getDay();
+  const currentWeek = getWeekOfMonth(today);
+
+  // Decidir qual semana mostrar
+  let targetWeek = currentWeek;
+  if (wm !== 'current' && wm !== 'all') targetWeek = parseInt(wm, 10);
+
+  const monthLabel = document.getElementById('routine-month-label');
+  if (monthLabel) {
+    const wkLbl = wm === 'all' ? 'todas as semanas' :
+                  wm === 'current' ? `${MONTHS_PT[today.getMonth()]} · ${currentWeek}ª semana` :
+                  `${MONTHS_PT[today.getMonth()]} · ${targetWeek}ª semana`;
+    monthLabel.textContent = wkLbl;
+  }
+
+  // Datas da semana alvo (apenas para mostrar números)
+  const weekDates = (wm === 'all') ? null : getDatesForWeekOfMonth(today.getFullYear(), today.getMonth(), targetWeek);
+
   // Contar itens concluídos por dia da semana
   const counts = Array(7).fill(0);
   const totals = Array(7).fill(0);
@@ -2882,14 +3111,16 @@ function renderRoutineWeekGrid(who) {
       if (r.done) counts[d]++;
     });
   });
-  const today = new Date().getDay();
+
   grid.innerHTML = DOW_LABELS.map((label, i) => {
     const pct = totals[i] > 0 ? Math.round((counts[i]/totals[i])*100) : 0;
-    const isToday = i === today;
+    const isToday = i === todayDow && (wm === 'current' || wm === 'all' || targetWeek === currentWeek);
     const color = pct >= 80 ? 'var(--green)' : pct >= 40 ? 'var(--amber)' : 'var(--text-4)';
+    const dateNum = weekDates && weekDates[i] ? weekDates[i].getDate() : '';
     return `
-      <div style="text-align:center; padding:8px 4px; border-radius:var(--radius); background:${isToday ? 'var(--bg-3)' : 'transparent'}; border:1px solid ${isToday ? 'var(--border-hi)' : 'transparent'};">
-        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:${isToday?'var(--amber)':'var(--text-4)'}; margin-bottom:4px;">${label}</div>
+      <div class="week-day-cell ${isToday?'current-week-day':''}" style="text-align:center; padding:8px 4px; border-radius:var(--radius); background:${isToday ? 'var(--bg-3)' : 'transparent'}; border:1px solid ${isToday ? 'var(--border-hi)' : 'transparent'};">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:${isToday?'var(--amber)':'var(--text-4)'}; margin-bottom:2px;">${label}</div>
+        ${dateNum ? `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-3);margin-bottom:3px;">${dateNum}</div>` : ''}
         <div style="font-family:var(--font-serif);font-size:18px;color:${color};line-height:1;">${pct}%</div>
         <div style="font-size:9px;color:var(--text-4);margin-top:2px;">${counts[i]}/${totals[i]}</div>
       </div>`;
@@ -3058,6 +3289,15 @@ function checkRoutineReset() {
       Object.values(state.routines.dailyGoals).forEach(arr => arr.forEach(g => g.done = false));
     }
     state.routines.lastReset = today;
+
+    // Reset mensal: se mudou o mês, limpa histórico de done count (mês a mês)
+    const currentMonth = today.slice(0,7);
+    if (state.routines.lastMonth !== currentMonth) {
+      state.routines.lastMonth = currentMonth;
+      // Aqui poderíamos arquivar o histórico se quiséssemos. Por ora,
+      // apenas atualiza o marcador — a UI já mostra o mês corrente.
+    }
+
     save();
   }
 }
@@ -3182,6 +3422,8 @@ function addVideoCard(colId) {
 const PARTNER_LABELS = { done: 'Feita ✓', todo: 'Gravar 📍', prospect: 'Prospecção 🔍' };
 
 function renderPartnerLists() {
+  const NEXT_KIND = { prospect: 'todo', todo: 'done', done: 'done' };
+  const NEXT_LABEL = { prospect: '→ A gravar', todo: '→ Feita', done: '✓' };
   ['done','todo','prospect'].forEach(k => {
     const grid = document.getElementById('grid-' + k);
     const count = document.getElementById('count-' + k);
@@ -3189,29 +3431,18 @@ function renderPartnerLists() {
     if (count) count.textContent = arr.length;
     if (!grid) return;
     if (arr.length === 0) {
-      grid.innerHTML = `<div style="grid-column:1/-1; color:var(--text-4); font-family:var(--font-serif); font-style:italic; font-size:13px; padding:16px 0;">Nenhum item ainda.</div>`;
+      grid.innerHTML = `<div class="partner-trello-empty">Nenhum item ainda.</div>`;
       return;
     }
     grid.innerHTML = arr.map(item => {
+      const canMove = k !== 'done';
       return `
-        <div class="partner-card" id="pc-${item.id}">
-          <span class="pc-status-badge ${k}">${PARTNER_LABELS[k]}</span>
-          <div class="pc-body">
-            <input class="pc-name" value="${escapeAttr(item.text)}" placeholder="Nome do lugar…"
-              onchange="updatePartnerItem('${k}','${item.id}',this.value)" />
-          </div>
-          <div class="pc-meta">
-            <select class="inline-input" style="font-size:10px;padding:2px 6px;max-width:110px;"
-              onchange="movePartnerCard('${k}','${item.id}',this.value)">
-              <option value="done"     ${k==='done'?'selected':''}>✓ Feita</option>
-              <option value="todo"     ${k==='todo'?'selected':''}>📍 Gravar</option>
-              <option value="prospect" ${k==='prospect'?'selected':''}>🔍 Prospecção</option>
-            </select>
-            <div class="pc-actions">
-              <button class="pc-delete" onclick="deletePartnerItem('${k}','${item.id}')" title="Remover">
-                <i class="ti ti-trash"></i>
-              </button>
-            </div>
+        <div class="partner-trello-card kind-${k}" id="pc-${item.id}">
+          <input class="ptc-name" value="${escapeAttr(item.text)}" placeholder="Nome do lugar…"
+            onchange="updatePartnerItem('${k}','${item.id}',this.value)" />
+          <div class="ptc-actions">
+            ${canMove ? `<button class="ptc-move" onclick="movePartnerCard('${k}','${item.id}','${NEXT_KIND[k]}')" title="Mover para ${NEXT_KIND[k]}"><i class="ti ti-arrow-right"></i></button>` : ''}
+            <button class="ptc-delete" onclick="deletePartnerItem('${k}','${item.id}')" title="Remover"><i class="ti ti-trash"></i></button>
           </div>
         </div>`;
     }).join('');
@@ -3240,11 +3471,17 @@ function movePartnerCard(fromKind, id, toKind) {
 }
 
 function applyPartnerFilter(f) {
-  document.querySelectorAll('.partner-section').forEach(sec => {
+  const trello = document.getElementById('partner-trello');
+  document.querySelectorAll('.partner-trello-col').forEach(sec => {
     const k = sec.dataset.psection;
     if (f === 'all' || f === k) sec.style.display = '';
     else sec.style.display = 'none';
   });
+  // Quando 1 coluna ativa, ela ocupa toda largura
+  if (trello) {
+    if (f === 'all') trello.style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))';
+    else trello.style.gridTemplateColumns = '1fr';
+  }
 }
 
 // Filtro de parcerias
@@ -3367,7 +3604,6 @@ function deleteCvTask(id) {
 /* ============================================================
    CALENDÁRIO (compartilhado entre Casalvintte e Geral)
    ============================================================ */
-const MONTHS_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const DOWS = ['dom','seg','ter','qua','qui','sex','sáb'];
 
 // Notas por dia: state.casalvintte.dayNotes = { 'YYYY-MM-DD': 'texto' }
@@ -3393,10 +3629,12 @@ function renderCalLabelPalette(kind) {
   const palId = 'cal-label-palette-' + kind;
   let pal = document.getElementById(palId);
   if (!pal) return;
-  pal.innerHTML = labels.map(lb => `
+  pal.innerHTML = `
+    <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-right:4px;"><i class="ti ti-tag" style="font-size:12px;color:var(--amber);margin-right:3px;"></i>Etiquetas:</span>
+    ` + labels.map(lb => `
     <span class="cal-label-chip" style="background:${lb.color}20;color:${lb.color};border:1px solid ${lb.color}40;"
       title="${escapeHtml(lb.name)}">${escapeHtml(lb.name)}</span>
-  `).join('') + `<button class="btn ghost sm" style="font-size:10px;padding:2px 8px;" onclick="openCalLabelEditor()"><i class="ti ti-tag"></i>Editar</button>`;
+  `).join('') + `<button class="btn ghost sm" style="font-size:10px;padding:3px 10px;margin-left:4px;" onclick="openCalLabelEditor()"><i class="ti ti-edit"></i>Editar etiquetas</button>`;
 }
 
 function openCalLabelEditor() {
@@ -3418,12 +3656,19 @@ function openCalLabelEditor() {
 }
 function updateCalLabel(id, field, value) {
   const lb = getCalLabels().find(x => x.id === id);
-  if (lb) { lb[field] = value; save(); renderAllCalLabelPalettes(); }
+  if (lb) {
+    lb[field] = value;
+    save();
+    renderAllCalLabelPalettes();
+    renderCalendar('casalvintte');
+    renderCalendar('general');
+  }
 }
 function addCalLabel() {
   getCalLabels().push({ id: uid(), name: 'Etiqueta', color: '#a299c2' });
   save();
   openCalLabelEditor();
+  renderAllCalLabelPalettes();
 }
 function deleteCalLabel(id) {
   const arr = getCalLabels();
@@ -3431,6 +3676,9 @@ function deleteCalLabel(id) {
   if (idx >= 0) arr.splice(idx, 1);
   save();
   openCalLabelEditor();
+  renderAllCalLabelPalettes();
+  renderCalendar('casalvintte');
+  renderCalendar('general');
 }
 function renderAllCalLabelPalettes() {
   renderCalLabelPalette('casalvintte');
