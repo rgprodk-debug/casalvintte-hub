@@ -1404,65 +1404,73 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
    PARCERIAS VISUAIS — NOVOS CARDS
    ============================================================ */
 .partner-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .partner-card {
   background: var(--bg-2);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  transition: all .2s ease;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  transition: all .15s ease;
   position: relative;
 }
-.partner-card:hover { border-color: var(--border-hi); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.partner-card:hover { border-color: var(--border-hi); background: var(--bg-3); }
 .partner-card .pc-status-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 9.5px;
-  padding: 3px 9px;
+  font-size: 9px;
+  padding: 2px 7px;
   border-radius: 99px;
   font-family: var(--font-mono);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  width: fit-content;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.partner-card .pc-status-badge.done     { background: var(--green-soft); color: var(--green); border: 1px solid rgba(138,171,154,0.3); }
-.partner-card .pc-status-badge.todo     { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(195,165,118,0.3); }
-.partner-card .pc-status-badge.prospect { background: var(--blue-soft);  color: var(--blue);  border: 1px solid rgba(143,163,194,0.3); }
+.partner-card .pc-status-badge.done     { background: var(--green-soft); color: var(--green); border: 1px solid rgba(138,171,154,0.25); }
+.partner-card .pc-status-badge.todo     { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(195,165,118,0.25); }
+.partner-card .pc-status-badge.prospect { background: var(--blue-soft);  color: var(--blue);  border: 1px solid rgba(143,163,194,0.25); }
 .partner-card .pc-body {
-  padding: 16px 16px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 .partner-card .pc-name {
-  font-family: var(--font-serif);
-  font-size: 16px;
-  font-weight: 400;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text);
-  letter-spacing: -0.01em;
-  line-height: 1.25;
   outline: none;
   border: none;
   background: transparent;
   padding: 0;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   caret-color: var(--amber);
 }
 .partner-card .pc-name:focus { color: var(--text); }
 .partner-card .pc-meta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 2px;
+  gap: 6px;
+  flex-shrink: 0;
 }
+.partner-card .pc-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.partner-card:hover .pc-actions { opacity: 1; }
 .partner-card .pc-actions {
   display: flex;
   gap: 4px;
@@ -1497,6 +1505,20 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
   color: var(--text-3);
   line-height: 1;
 }
+
+/* Calendar label chips */
+.cal-label-chip {
+  font-size: 10px;
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: default;
+  white-space: nowrap;
+}
+/* Daily goals done state */
+#list-daily-goals li.done input[type="text"] { text-decoration: line-through; color: var(--text-4); }
 
 /* ============================================================
    CALENDÁRIO — NOTAS INLINE
@@ -1669,9 +1691,15 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
 
   <!-- Individual -->
   <div class="fin-pane" id="fin-individual">
-    <div class="subnav" id="who-subnav" style="margin-bottom: 18px;">
-      <button class="subnav-btn active" data-who="duda">Duda</button>
-      <button class="subnav-btn" data-who="rafa">Rafa</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;">
+      <div class="subnav" id="who-subnav">
+        <button class="subnav-btn active" data-who="duda">Duda</button>
+        <button class="subnav-btn" data-who="rafa">Rafa</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-4);">Mês</span>
+        <input type="month" id="fin-month-filter" class="inline-input" style="max-width:150px;" />
+      </div>
     </div>
 
     <div class="grid grid-4 mb-16" id="fin-ind-metrics"></div>
@@ -1679,7 +1707,7 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
     <div class="grid grid-2 mb-16">
       <div class="card">
         <div class="flex-between mb-16">
-          <h2 class="section-title" style="margin:0"><i class="ti ti-trending-up" style="color:var(--green)"></i>Ganhos fixos mensais</h2>
+          <h2 class="section-title" style="margin:0"><i class="ti ti-trending-up" style="color:var(--green)"></i>Ganhos fixos</h2>
           <button class="btn sm" onclick="addFinRow('fixed')"><i class="ti ti-plus"></i>Adicionar</button>
         </div>
         <table class="editable-table" id="tbl-fixed"></table>
@@ -1704,6 +1732,13 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
           <button class="btn sm" onclick="addFinRow('subs')"><i class="ti ti-plus"></i>Adicionar</button>
         </div>
         <table class="editable-table" id="tbl-subs"></table>
+      </div>
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="flex-between mb-16">
+          <h2 class="section-title" style="margin:0"><i class="ti ti-wallet" style="color:var(--amber)"></i>Gastos variáveis</h2>
+          <button class="btn sm" onclick="addFinRow('variaveis')"><i class="ti ti-plus"></i>Adicionar</button>
+        </div>
+        <table class="editable-table" id="tbl-variaveis"></table>
       </div>
     </div>
   </div>
@@ -1779,12 +1814,33 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
     <button class="subnav-btn" data-routine="rafa">Rafa</button>
   </div>
 
-  <div class="card">
+  <!-- Semanas do mês -->
+  <div class="card mb-16">
     <div class="flex-between mb-16">
       <h2 class="section-title" style="margin:0"><i class="ti ti-clock-hour-5"></i><span id="routine-name">Rotina da Duda</span></h2>
-      <button class="btn sm" onclick="addRoutineRow()"><i class="ti ti-plus"></i>Adicionar item</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="chips" id="routine-week-filter">
+          <button class="chip active" data-week="all">Todos os dias</button>
+          <button class="chip" data-week="1,2,3,4,5">Seg–Sex</button>
+          <button class="chip" data-week="6,0">Fim de semana</button>
+        </div>
+        <button class="btn sm" onclick="addRoutineRow()"><i class="ti ti-plus"></i>Adicionar</button>
+      </div>
     </div>
+
+    <!-- Grade por dias da semana -->
+    <div id="routine-week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px;"></div>
+
     <table class="editable-table routine-table" id="tbl-routine"></table>
+  </div>
+
+  <!-- Metas diárias -->
+  <div class="card">
+    <div class="flex-between mb-16">
+      <h2 class="section-title" style="margin:0"><i class="ti ti-target" style="color:var(--amber)"></i>Metas diárias</h2>
+      <button class="btn sm" onclick="addDailyGoal()"><i class="ti ti-plus"></i>Adicionar</button>
+    </div>
+    <ul class="simple-list" id="list-daily-goals"></ul>
   </div>
 </section>
 
@@ -1866,6 +1922,7 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
 
   <!-- Calendário casalvintte + tarefas -->
   <div class="two-col">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;" id="cal-label-palette-casalvintte"></div>
     <div class="calendar" id="cal-casalvintte"></div>
     <div class="card">
       <div class="flex-between mb-16">
@@ -2028,6 +2085,7 @@ h2.section-title i { color: var(--text-3); font-size: 18px; }
   </div>
 
   <div class="two-col">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;" id="cal-label-palette-general"></div>
     <div class="calendar" id="cal-general"></div>
     <div class="card">
       <h2 class="section-title"><i class="ti ti-calendar-event"></i>Próximos 7 dias</h2>
@@ -2057,13 +2115,14 @@ const defaultState = () => ({
   finance: {
     individual: {
       duda: {
-        fixed:  [{ id: uid(), desc: 'Salário Asper',     amount: 0 }],
-        extra:  [{ id: uid(), desc: 'Parceria Casalvintte', amount: 0 }],
-        debts:  [{ id: uid(), desc: 'Fatura Nubank',     amount: 0 }],
-        subs:   [{ id: uid(), desc: 'Spotify',            amount: 21.90 }, { id: uid(), desc: 'Netflix', amount: 39.90 }],
+        fixed:  [{ id: uid(), desc: 'Salário Asper',     amount: 0, month: todayISO().slice(0,7) }],
+        extra:  [{ id: uid(), desc: 'Parceria Casalvintte', amount: 0, month: todayISO().slice(0,7) }],
+        debts:  [{ id: uid(), desc: 'Fatura Nubank',     amount: 0, month: todayISO().slice(0,7) }],
+        subs:   [{ id: uid(), desc: 'Spotify',            amount: 21.90, month: todayISO().slice(0,7) }, { id: uid(), desc: 'Netflix', amount: 39.90, month: todayISO().slice(0,7) }],
+        variaveis: [{ id: uid(), desc: 'Alimentação fora', amount: 0, month: todayISO().slice(0,7) }],
       },
       rafa: {
-        fixed: [], extra: [], debts: [], subs: [],
+        fixed: [], extra: [], debts: [], subs: [], variaveis: [],
       }
     },
     casal: {
@@ -2081,16 +2140,23 @@ const defaultState = () => ({
   },
   routines: {
     duda: [
-      { id: uid(), time: '5h40',       desc: 'Acordar / 500ml de água',          done: false },
-      { id: uid(), time: '6h00',       desc: 'Deslocamento academia',            done: false },
-      { id: uid(), time: '6h30–7h30',  desc: 'Academia',                         done: false },
-      { id: uid(), time: '7h30–8h40',  desc: 'Se arruma',                        done: false },
-      { id: uid(), time: '9h00',       desc: 'Trabalho Asper',                   done: false },
-      { id: uid(), time: '12h30–13h30',desc: 'Almoço + leitura',                 done: false },
-      { id: uid(), time: '13h30–17h30',desc: 'Asper + afazeres Casalvintte',     done: false },
-      { id: uid(), time: 'Noite',      desc: 'Estudos / cursos / Casalvintte / janta / banho', done: false },
+      { id: uid(), time: '5h40',       desc: 'Acordar / 500ml de água',          done: false, days: [1,2,3,4,5] },
+      { id: uid(), time: '6h00',       desc: 'Deslocamento academia',            done: false, days: [1,2,3,4,5] },
+      { id: uid(), time: '6h30–7h30',  desc: 'Academia',                         done: false, days: [1,2,3,4,5] },
+      { id: uid(), time: '7h30–8h40',  desc: 'Se arruma',                        done: false, days: [1,2,3,4,5] },
+      { id: uid(), time: '9h00',       desc: 'Trabalho Asper',                   done: false, days: [1,2,3,4,5] },
+      { id: uid(), time: '12h30–13h30',desc: 'Almoço + leitura',                 done: false, days: [1,2,3,4,5] },
+      { id: uid(), time: '13h30–17h30',desc: 'Asper + afazeres Casalvintte',     done: false, days: [1,2,3,4,5] },
+      { id: uid(), time: 'Noite',      desc: 'Estudos / cursos / Casalvintte / janta / banho', done: false, days: [1,2,3,4,5,6,0] },
     ],
     rafa: [],
+    dailyGoals: {
+      duda: [
+        { id: uid(), text: 'Beber 2L de água', done: false },
+        { id: uid(), text: 'Postar story Casalvintte', done: false },
+      ],
+      rafa: [],
+    },
     lastReset: todayISO(),
   },
   casalvintte: {
@@ -2163,13 +2229,15 @@ const defaultState = () => ({
 
   ui: {
     activeTab: 'dashboard',
-    financeSub: 'individual',
-    who: 'duda',           // duda/rafa toggle
+    who: 'duda',
     routine: 'duda',
     personalGoal: 'duda',
-    casalvintteMonth: ymOf(new Date()),
-    generalMonth: ymOf(new Date()),
-  }
+    finMonth: todayISO().slice(0,7),
+    routineWeek: 'all',
+    casalvintteMonth: todayISO().slice(0,7),
+    generalMonth: todayISO().slice(0,7),
+  },
+  calLabels: [],
 });
 
 function ymOf(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0'); }
@@ -2227,18 +2295,8 @@ function sanitizeForFirebase(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-/* ----- Reset diário da rotina à meia-noite ----- */
-function checkRoutineReset() {
-  const today = todayISO();
-  if (state.routines.lastReset !== today) {
-    state.routines.duda.forEach(r => r.done = false);
-    state.routines.rafa.forEach(r => r.done = false);
-    state.routines.lastReset = today;
-    save();
-  }
-}
 checkRoutineReset();
-// Re-checa a cada minuto (caso usuário deixe a aba aberta)
+// Re-checa a cada minuto
 setInterval(checkRoutineReset, 60 * 1000);
 
 /* ============================================================
@@ -2271,23 +2329,25 @@ document.querySelectorAll('.nav-tab').forEach(btn => {
    ============================================================ */
 let chartBar, chartPie, chartInvest;
 
-function calcTotals() {
-  const sum = arr => arr.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+function calcTotals(month) {
+  const sum = (arr) => (arr||[]).filter(r => !month || !r.month || r.month === month).reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
   const d = state.finance.individual.duda;
   const r = state.finance.individual.rafa;
   const c = state.finance.casal;
   return {
     duda: {
-      income:   sum(d.fixed) + sum(d.extra),
-      expenses: sum(d.debts) + sum(d.subs),
-      debts:    sum(d.debts),
-      subs:     sum(d.subs),
+      income:    sum(d.fixed) + sum(d.extra),
+      expenses:  sum(d.debts) + sum(d.subs) + sum(d.variaveis),
+      debts:     sum(d.debts),
+      subs:      sum(d.subs),
+      variaveis: sum(d.variaveis),
     },
     rafa: {
-      income:   sum(r.fixed) + sum(r.extra),
-      expenses: sum(r.debts) + sum(r.subs),
-      debts:    sum(r.debts),
-      subs:     sum(r.subs),
+      income:    sum(r.fixed) + sum(r.extra),
+      expenses:  sum(r.debts) + sum(r.subs) + sum(r.variaveis),
+      debts:     sum(r.debts),
+      subs:      sum(r.subs),
+      variaveis: sum(r.variaveis),
     },
     casal: {
       income:   sum(c.income),
@@ -2432,34 +2492,64 @@ document.querySelectorAll('#who-subnav .subnav-btn').forEach(b => {
 })();
 
 // Render tabela individual
+// Mês selecionado no financeiro individual
+(function initFinMonth() {
+  // Será chamado dentro de renderAll após DOM estar pronto
+})();
+
+function setupFinMonth() {
+  const inp = document.getElementById('fin-month-filter');
+  if (!inp || inp.dataset.inited) return;
+  inp.dataset.inited = '1';
+  inp.value = state.ui.finMonth || todayISO().slice(0,7);
+  inp.addEventListener('change', () => {
+    state.ui.finMonth = inp.value;
+    save();
+    renderFinanceIndividual();
+  });
+}
+
+function getFinMonth() {
+  const inp = document.getElementById('fin-month-filter');
+  return (inp && inp.value) || state.ui.finMonth || todayISO().slice(0,7);
+}
+
 function renderFinanceIndividual() {
   const who = state.ui.who;
   const data = state.finance.individual[who];
+  const month = getFinMonth();
 
-  renderFinTable('tbl-fixed',  data.fixed,  'Descrição', 'Valor mensal');
-  renderFinTable('tbl-extra',  data.extra,  'Descrição', 'Valor');
-  renderFinTable('tbl-debts',  data.debts,  'Descrição', 'Valor');
-  renderFinTable('tbl-subs',   data.subs,   'Serviço',   'Valor mensal');
+  renderFinTable('tbl-fixed',     data.fixed,     'Descrição', 'Valor', month);
+  renderFinTable('tbl-extra',     data.extra,     'Descrição', 'Valor', month);
+  renderFinTable('tbl-debts',     data.debts,     'Descrição', 'Valor', month);
+  renderFinTable('tbl-subs',      data.subs,      'Serviço',   'Valor', month);
+  renderFinTable('tbl-variaveis', data.variaveis || [], 'Descrição', 'Valor', month);
 
-  const t = calcTotals();
+  const t = calcTotals(month);
   const pt = t[who];
   document.getElementById('fin-ind-metrics').innerHTML = `
     ${metricCard('Ganhos',   BRL(pt.income),   'green', 'ti-trending-up')}
     ${metricCard('Despesas', BRL(pt.expenses), 'red',   'ti-trending-down')}
     ${metricCard('Saldo',    BRL(pt.income - pt.expenses), (pt.income - pt.expenses) >= 0 ? 'blue' : 'red', 'ti-scale')}
-    ${metricCard('Cartão',   BRL(pt.debts),    'amber', 'ti-credit-card')}
+    ${metricCard('Variáveis', BRL(pt.variaveis||0), 'amber', 'ti-wallet')}
   `;
 }
 
-function renderFinTable(id, rows, descLabel, amountLabel) {
+function renderFinTable(id, rows, descLabel, amountLabel, month) {
   const tbl = document.getElementById(id);
   if (!tbl) return;
-  const total = rows.reduce((s,r) => s + (parseFloat(r.amount) || 0), 0);
+  // Filtrar por mês se fornecido
+  const filtered = month ? rows.filter(r => !r.month || r.month === month) : rows;
+  const total = filtered.reduce((s,r) => s + (parseFloat(r.amount) || 0), 0);
   tbl.innerHTML = `
-    <thead><tr><th>${descLabel}</th><th style="text-align:right">${amountLabel}</th><th></th></tr></thead>
+    <thead><tr>
+      <th>${descLabel}</th>
+      <th style="text-align:right">${amountLabel}</th>
+      <th></th>
+    </tr></thead>
     <tbody>
-      ${rows.length === 0 ? `<tr class="empty-row"><td colspan="3">Nenhum registro. Clique em "Adicionar".</td></tr>` : ''}
-      ${rows.map(r => `
+      ${filtered.length === 0 ? `<tr class="empty-row"><td colspan="3">Nenhum registro para ${month||'este mês'}.</td></tr>` : ''}
+      ${filtered.map(r => `
         <tr>
           <td><input type="text" class="inline-input" value="${escapeAttr(r.desc)}"
             onchange="updateFinRow('${id}','${r.id}','desc',this.value)" /></td>
@@ -2468,18 +2558,20 @@ function renderFinTable(id, rows, descLabel, amountLabel) {
             onchange="updateFinRow('${id}','${r.id}','amount',this.value)" /></td>
           <td class="actions"><button class="btn-icon danger" onclick="deleteFinRow('${id}','${r.id}')"><i class="ti ti-trash"></i></button></td>
         </tr>`).join('')}
-      <tr class="totals-row"><td>Total</td><td class="amount">${BRL(total)}</td><td></td></tr>
+      <tr class="totals-row"><td>Total · ${month ? formatMonth(month) : '—'}</td><td class="amount">${BRL(total)}</td><td></td></tr>
     </tbody>`;
 }
 
 // Map id de tabela -> coleção no estado
 function getFinCollection(tableId) {
   const who = state.ui.who;
+  if (!state.finance.individual[who].variaveis) state.finance.individual[who].variaveis = [];
   const map = {
-    'tbl-fixed': state.finance.individual[who].fixed,
-    'tbl-extra': state.finance.individual[who].extra,
-    'tbl-debts': state.finance.individual[who].debts,
-    'tbl-subs':  state.finance.individual[who].subs,
+    'tbl-fixed':     state.finance.individual[who].fixed,
+    'tbl-extra':     state.finance.individual[who].extra,
+    'tbl-debts':     state.finance.individual[who].debts,
+    'tbl-subs':      state.finance.individual[who].subs,
+    'tbl-variaveis': state.finance.individual[who].variaveis,
   };
   return map[tableId];
 }
@@ -2496,21 +2588,23 @@ function updateFinRow(tableId, rowId, field, value) {
 
 function renderMetricsOnly() {
   const who = state.ui.who;
-  const t = calcTotals();
+  const month = getFinMonth();
+  const t = calcTotals(month);
   const pt = t[who];
   const el = document.getElementById('fin-ind-metrics');
   if (el) el.innerHTML = `
     ${metricCard('Ganhos',   BRL(pt.income),   'green', 'ti-trending-up')}
     ${metricCard('Despesas', BRL(pt.expenses), 'red',   'ti-trending-down')}
     ${metricCard('Saldo',    BRL(pt.income - pt.expenses), (pt.income - pt.expenses) >= 0 ? 'blue' : 'red', 'ti-scale')}
-    ${metricCard('Cartão',   BRL(pt.debts),    'amber', 'ti-credit-card')}
+    ${metricCard('Variáveis', BRL(pt.variaveis||0), 'amber', 'ti-wallet')}
   `;
-  // Atualiza só o rodapé total da tabela editada
-  ['tbl-fixed','tbl-extra','tbl-debts','tbl-subs'].forEach(id => {
+  ['tbl-fixed','tbl-extra','tbl-debts','tbl-subs','tbl-variaveis'].forEach(id => {
     const tbl = document.getElementById(id);
     if (!tbl) return;
     const col = getFinCollection(id);
-    const total = col.reduce((s,r) => s + (parseFloat(r.amount) || 0), 0);
+    if (!col) return;
+    const filtered = month ? col.filter(r => !r.month || r.month === month) : col;
+    const total = filtered.reduce((s,r) => s + (parseFloat(r.amount) || 0), 0);
     const totalCell = tbl.querySelector('.totals-row .amount');
     if (totalCell) totalCell.textContent = BRL(total);
   });
@@ -2526,7 +2620,9 @@ function deleteFinRow(tableId, rowId) {
 
 function addFinRow(kind) {
   const who = state.ui.who;
-  state.finance.individual[who][kind].push({ id: uid(), desc: '', amount: 0 });
+  const month = getFinMonth();
+  if (!state.finance.individual[who][kind]) state.finance.individual[who][kind] = [];
+  state.finance.individual[who][kind].push({ id: uid(), desc: '', amount: 0, month });
   save();
   renderFinanceIndividual();
 }
@@ -2748,23 +2844,106 @@ document.querySelectorAll('#routine-subnav .subnav-btn').forEach(b => {
   document.querySelectorAll('#routine-subnav .subnav-btn').forEach(x => x.classList.toggle('active', x.dataset.routine === r));
 })();
 
+const DOW_LABELS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+// Filtro de semana na rotina
+document.querySelectorAll('#routine-week-filter .chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('#routine-week-filter .chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    state.ui.routineWeek = c.dataset.week;
+    save();
+    renderRoutine();
+  });
+});
+
+function getRoutineWeekFilter() {
+  const active = document.querySelector('#routine-week-filter .chip.active');
+  return active ? active.dataset.week : 'all';
+}
+
+// Obter semana do mês (1 a 5)
+function getWeekOfMonth(date) {
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  return Math.ceil((date.getDate() + firstDay) / 7);
+}
+
+function renderRoutineWeekGrid(who) {
+  const grid = document.getElementById('routine-week-grid');
+  if (!grid) return;
+  const items = state.routines[who] || [];
+  // Contar itens concluídos por dia da semana
+  const counts = Array(7).fill(0);
+  const totals = Array(7).fill(0);
+  items.forEach(r => {
+    const days = r.days || [0,1,2,3,4,5,6];
+    days.forEach(d => {
+      totals[d]++;
+      if (r.done) counts[d]++;
+    });
+  });
+  const today = new Date().getDay();
+  grid.innerHTML = DOW_LABELS.map((label, i) => {
+    const pct = totals[i] > 0 ? Math.round((counts[i]/totals[i])*100) : 0;
+    const isToday = i === today;
+    const color = pct >= 80 ? 'var(--green)' : pct >= 40 ? 'var(--amber)' : 'var(--text-4)';
+    return `
+      <div style="text-align:center; padding:8px 4px; border-radius:var(--radius); background:${isToday ? 'var(--bg-3)' : 'transparent'}; border:1px solid ${isToday ? 'var(--border-hi)' : 'transparent'};">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:${isToday?'var(--amber)':'var(--text-4)'}; margin-bottom:4px;">${label}</div>
+        <div style="font-family:var(--font-serif);font-size:18px;color:${color};line-height:1;">${pct}%</div>
+        <div style="font-size:9px;color:var(--text-4);margin-top:2px;">${counts[i]}/${totals[i]}</div>
+      </div>`;
+  }).join('');
+}
+
 function renderRoutine() {
   const who = state.ui.routine;
-  const items = state.routines[who];
-  document.getElementById('routine-name').textContent = 'Rotina do ' + (who === 'duda' ? 'Duda' : 'Rafa');
+  const items = state.routines[who] || [];
+  document.getElementById('routine-name').textContent = 'Rotina d' + (who === 'duda' ? 'a Duda' : 'o Rafa');
+
+  // Week grid
+  renderRoutineWeekGrid(who);
+
+  // Filtro de dias
+  const weekFilter = getRoutineWeekFilter();
+  let filtered = items;
+  if (weekFilter !== 'all') {
+    const allowedDays = weekFilter.split(',').map(Number);
+    filtered = items.filter(r => {
+      const days = r.days || [0,1,2,3,4,5,6];
+      return days.some(d => allowedDays.includes(d));
+    });
+  }
 
   const tbl = document.getElementById('tbl-routine');
   tbl.innerHTML = `
-    <thead><tr><th style="width:140px">Horário</th><th>Atividade</th><th class="check-cell">Feito</th><th></th></tr></thead>
+    <thead><tr>
+      <th style="width:120px">Horário</th>
+      <th>Atividade</th>
+      <th style="width:140px">Dias</th>
+      <th class="check-cell">✓</th>
+      <th></th>
+    </tr></thead>
     <tbody>
-      ${items.length === 0 ? `<tr class="empty-row"><td colspan="4">Rotina vazia. Adicione um item para começar.</td></tr>` : ''}
-      ${items.map(r => `
-        <tr class="${r.done ? 'routine-completed' : ''}">
-          <td class="time-cell"><input class="inline-input" value="${escapeAttr(r.time)}" onchange="updateRoutine('${r.id}','time',this.value)"/></td>
-          <td><input class="inline-input" value="${escapeAttr(r.desc)}" onchange="updateRoutine('${r.id}','desc',this.value)"/></td>
-          <td class="check-cell"><input type="checkbox" class="checkbox" ${r.done?'checked':''} onchange="toggleRoutine('${r.id}')"/></td>
-          <td class="actions"><button class="btn-icon danger" onclick="deleteRoutine('${r.id}')"><i class="ti ti-trash"></i></button></td>
-        </tr>`).join('')}
+      ${filtered.length === 0 ? `<tr class="empty-row"><td colspan="5">Nenhum item para este filtro.</td></tr>` : ''}
+      ${filtered.map(r => {
+        const days = r.days || [0,1,2,3,4,5,6];
+        const dayBadges = DOW_LABELS.map((lb, i) =>
+          `<span style="font-size:9px;padding:1px 4px;border-radius:3px;cursor:pointer;
+            background:${days.includes(i)?'var(--amber-soft)':'var(--bg-3)'};
+            color:${days.includes(i)?'var(--amber)':'var(--text-4)'};
+            border:1px solid ${days.includes(i)?'rgba(195,165,118,0.3)':'transparent'}"
+            onclick="toggleRoutineDay('${r.id}',${i})">${lb}</span>`
+        ).join('');
+        return `
+          <tr class="${r.done ? 'routine-completed' : ''}">
+            <td class="time-cell"><input class="inline-input" value="${escapeAttr(r.time)}" onchange="updateRoutine('${r.id}','time',this.value)"/></td>
+            <td><input class="inline-input" value="${escapeAttr(r.desc)}" onchange="updateRoutine('${r.id}','desc',this.value)"/></td>
+            <td><div style="display:flex;flex-wrap:wrap;gap:2px;">${dayBadges}</div></td>
+            <td class="check-cell"><input type="checkbox" class="checkbox" ${r.done?'checked':''} onchange="toggleRoutine('${r.id}')"/></td>
+            <td class="actions"><button class="btn-icon danger" onclick="deleteRoutine('${r.id}')"><i class="ti ti-trash"></i></button></td>
+          </tr>`;
+      }).join('')}
     </tbody>`;
 
   // Progress
@@ -2772,6 +2951,21 @@ function renderRoutine() {
   const pct = items.length > 0 ? (done / items.length) * 100 : 0;
   document.getElementById('routine-progress-bar').style.width = pct + '%';
   document.getElementById('routine-progress-pct').textContent = pct.toFixed(0) + '%';
+
+  // Daily goals
+  renderDailyGoals();
+}
+
+function toggleRoutineDay(id, day) {
+  const who = state.ui.routine;
+  const r = state.routines[who].find(x => x.id === id);
+  if (!r) return;
+  if (!r.days) r.days = [0,1,2,3,4,5,6];
+  const idx = r.days.indexOf(day);
+  if (idx >= 0) r.days.splice(idx, 1);
+  else r.days.push(day);
+  save();
+  renderRoutine();
 }
 
 function updateRoutine(id, field, value) {
@@ -2799,9 +2993,73 @@ function deleteRoutine(id) {
 }
 function addRoutineRow() {
   const who = state.ui.routine;
-  state.routines[who].push({ id: uid(), time: '', desc: '', done: false });
+  if (!state.routines[who]) state.routines[who] = [];
+  state.routines[who].push({ id: uid(), time: '', desc: '', done: false, days: [1,2,3,4,5] });
   save();
   renderRoutine();
+}
+
+/* --- Metas diárias --- */
+function renderDailyGoals() {
+  const who = state.ui.routine;
+  if (!state.routines.dailyGoals) state.routines.dailyGoals = { duda: [], rafa: [] };
+  if (!state.routines.dailyGoals[who]) state.routines.dailyGoals[who] = [];
+  const goals = state.routines.dailyGoals[who];
+  const ul = document.getElementById('list-daily-goals');
+  if (!ul) return;
+  if (goals.length === 0) {
+    ul.innerHTML = `<li class="text-mute text-sm" style="background:transparent;border:none;justify-content:center;">Nenhuma meta diária. Clique em "Adicionar".</li>`;
+    return;
+  }
+  ul.innerHTML = goals.map(g => `
+    <li class="${g.done ? 'done' : ''}" style="gap:8px;">
+      <input type="checkbox" class="checkbox" ${g.done?'checked':''} onchange="toggleDailyGoal('${g.id}')"/>
+      <input type="text" class="inline-input text" value="${escapeAttr(g.text)}" onchange="updateDailyGoal('${g.id}',this.value)" style="flex:1;"/>
+      <button class="btn-icon danger" onclick="deleteDailyGoal('${g.id}')"><i class="ti ti-trash"></i></button>
+    </li>`).join('');
+}
+function addDailyGoal() {
+  const who = state.ui.routine;
+  if (!state.routines.dailyGoals) state.routines.dailyGoals = { duda: [], rafa: [] };
+  if (!state.routines.dailyGoals[who]) state.routines.dailyGoals[who] = [];
+  state.routines.dailyGoals[who].push({ id: uid(), text: 'Nova meta', done: false });
+  save();
+  renderDailyGoals();
+}
+function toggleDailyGoal(id) {
+  const who = state.ui.routine;
+  const g = state.routines.dailyGoals[who].find(x => x.id === id);
+  if (!g) return;
+  g.done = !g.done;
+  save();
+  renderDailyGoals();
+}
+function updateDailyGoal(id, value) {
+  const who = state.ui.routine;
+  const g = state.routines.dailyGoals[who].find(x => x.id === id);
+  if (g) { g.text = value; save(); }
+}
+function deleteDailyGoal(id) {
+  const who = state.ui.routine;
+  const arr = state.routines.dailyGoals[who];
+  const idx = arr.findIndex(x => x.id === id);
+  if (idx >= 0) arr.splice(idx, 1);
+  save();
+  renderDailyGoals();
+}
+
+// Reset diário também reseta metas diárias
+function checkRoutineReset() {
+  const today = todayISO();
+  if (state.routines.lastReset !== today) {
+    (state.routines.duda||[]).forEach(r => r.done = false);
+    (state.routines.rafa||[]).forEach(r => r.done = false);
+    if (state.routines.dailyGoals) {
+      Object.values(state.routines.dailyGoals).forEach(arr => arr.forEach(g => g.done = false));
+    }
+    state.routines.lastReset = today;
+    save();
+  }
 }
 
 /* ============================================================
@@ -2937,22 +3195,22 @@ function renderPartnerLists() {
     grid.innerHTML = arr.map(item => {
       return `
         <div class="partner-card" id="pc-${item.id}">
+          <span class="pc-status-badge ${k}">${PARTNER_LABELS[k]}</span>
           <div class="pc-body">
-            <span class="pc-status-badge ${k}">${PARTNER_LABELS[k]}</span>
             <input class="pc-name" value="${escapeAttr(item.text)}" placeholder="Nome do lugar…"
               onchange="updatePartnerItem('${k}','${item.id}',this.value)" />
-            <div class="pc-meta">
-              <select class="inline-input" style="font-size:11px;padding:3px 6px;max-width:120px;"
-                onchange="movePartnerCard('${k}','${item.id}',this.value)">
-                <option value="done"     ${k==='done'?'selected':''}>✓ Feita</option>
-                <option value="todo"     ${k==='todo'?'selected':''}>📍 Gravar</option>
-                <option value="prospect" ${k==='prospect'?'selected':''}>🔍 Prospecção</option>
-              </select>
-              <div class="pc-actions">
-                <button class="pc-delete" onclick="deletePartnerItem('${k}','${item.id}')" title="Remover">
-                  <i class="ti ti-trash"></i>
-                </button>
-              </div>
+          </div>
+          <div class="pc-meta">
+            <select class="inline-input" style="font-size:10px;padding:2px 6px;max-width:110px;"
+              onchange="movePartnerCard('${k}','${item.id}',this.value)">
+              <option value="done"     ${k==='done'?'selected':''}>✓ Feita</option>
+              <option value="todo"     ${k==='todo'?'selected':''}>📍 Gravar</option>
+              <option value="prospect" ${k==='prospect'?'selected':''}>🔍 Prospecção</option>
+            </select>
+            <div class="pc-actions">
+              <button class="pc-delete" onclick="deletePartnerItem('${k}','${item.id}')" title="Remover">
+                <i class="ti ti-trash"></i>
+              </button>
             </div>
           </div>
         </div>`;
@@ -3117,6 +3375,68 @@ const DOWS = ['dom','seg','ter','qua','qui','sex','sáb'];
 
 let _activeNoteEditor = null;
 
+// Labels editáveis do calendário: state.calLabels = [ {id, name, color} ]
+const DEFAULT_CAL_LABELS = [
+  { id: 'l1', name: 'Parceria', color: '#c3a576' },
+  { id: 'l2', name: 'Pessoal',  color: '#8aab9a' },
+  { id: 'l3', name: 'Trabalho', color: '#8fa3c2' },
+  { id: 'l4', name: 'Lazer',    color: '#a299c2' },
+];
+
+function getCalLabels() {
+  if (!state.calLabels || state.calLabels.length === 0) state.calLabels = DEFAULT_CAL_LABELS;
+  return state.calLabels;
+}
+
+function renderCalLabelPalette(kind) {
+  const labels = getCalLabels();
+  const palId = 'cal-label-palette-' + kind;
+  let pal = document.getElementById(palId);
+  if (!pal) return;
+  pal.innerHTML = labels.map(lb => `
+    <span class="cal-label-chip" style="background:${lb.color}20;color:${lb.color};border:1px solid ${lb.color}40;"
+      title="${escapeHtml(lb.name)}">${escapeHtml(lb.name)}</span>
+  `).join('') + `<button class="btn ghost sm" style="font-size:10px;padding:2px 8px;" onclick="openCalLabelEditor()"><i class="ti ti-tag"></i>Editar</button>`;
+}
+
+function openCalLabelEditor() {
+  const labels = getCalLabels();
+  showModal(`
+    <h3><i class="ti ti-tag" style="color:var(--amber)"></i> Etiquetas <em>do calendário</em></h3>
+    <div id="label-editor-list">
+      ${labels.map(lb => `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <input type="color" value="${lb.color}" style="width:32px;height:32px;border:none;background:transparent;cursor:pointer;padding:0;border-radius:4px;"
+            onchange="updateCalLabel('${lb.id}','color',this.value)" />
+          <input type="text" class="inline-input" value="${escapeAttr(lb.name)}" style="flex:1;"
+            onchange="updateCalLabel('${lb.id}','name',this.value)" placeholder="Nome da etiqueta"/>
+          <button class="btn-icon danger" onclick="deleteCalLabel('${lb.id}')"><i class="ti ti-trash"></i></button>
+        </div>`).join('')}
+    </div>
+    <button class="btn sm" style="margin-top:8px;" onclick="addCalLabel()"><i class="ti ti-plus"></i>Nova etiqueta</button>
+  `);
+}
+function updateCalLabel(id, field, value) {
+  const lb = getCalLabels().find(x => x.id === id);
+  if (lb) { lb[field] = value; save(); renderAllCalLabelPalettes(); }
+}
+function addCalLabel() {
+  getCalLabels().push({ id: uid(), name: 'Etiqueta', color: '#a299c2' });
+  save();
+  openCalLabelEditor();
+}
+function deleteCalLabel(id) {
+  const arr = getCalLabels();
+  const idx = arr.findIndex(x => x.id === id);
+  if (idx >= 0) arr.splice(idx, 1);
+  save();
+  openCalLabelEditor();
+}
+function renderAllCalLabelPalettes() {
+  renderCalLabelPalette('casalvintte');
+  renderCalLabelPalette('general');
+}
+
 function renderCalendar(kind) {
   const elId = kind === 'casalvintte' ? 'cal-casalvintte' : 'cal-general';
   const wrap = document.getElementById(elId);
@@ -3142,7 +3462,11 @@ function renderCalendar(kind) {
     cellsHtml += `
       <div class="cal-day ${isToday?'today':''} ${hasNote?'has-note':''}" data-iso="${iso}" data-kind="${kind}">
         <div class="num">${d}</div>
-        ${dayEvents.length ? '<div class="events">' + dayEvents.slice(0,2).map(ev => `<div class="cal-event ${ev.type||'personal'}">${ev.time?ev.time+' ':''}${escapeHtml(ev.title)}</div>`).join('') + (dayEvents.length > 2 ? `<div class="cal-event">+${dayEvents.length-2}</div>` : '') + '</div>' : ''}
+        ${dayEvents.length ? '<div class="events">' + dayEvents.slice(0,2).map(ev => {
+          const lb = ev.labelId ? getCalLabels().find(x => x.id === ev.labelId) : null;
+          const dot = lb ? `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${lb.color};margin-right:3px;flex-shrink:0;"></span>` : '';
+          return `<div class="cal-event ${ev.type||'personal'}" style="${lb?`border-left:2px solid ${lb.color};`:''}">${dot}${ev.time?ev.time+' ':''}${escapeHtml(ev.title)}</div>`;
+        }).join('') + (dayEvents.length > 2 ? `<div class="cal-event">+${dayEvents.length-2}</div>` : '') + '</div>' : ''}
         ${hasNote ? `<div class="cal-note-inline">${escapeHtml(note)}</div>` : ''}
       </div>`;
   }
@@ -3263,26 +3587,32 @@ function navMonth(kind, dir) {
 function openEventModal(kind, iso) {
   const events = kind === 'casalvintte' ? state.casalvintte.calendarEvents : state.generalEvents;
   const existing = events[iso] || [];
+  const labels = getCalLabels();
   const typeOptions = kind === 'casalvintte'
     ? `<option value="partnership">Parceria</option><option value="casalvintte">Gravação Casalvintte</option>`
     : `<option value="personal">Evento pessoal</option><option value="casalvintte">Casalvintte / parceria</option>`;
+  const labelOptions = `<option value="">— sem etiqueta —</option>` + labels.map(lb =>
+    `<option value="${lb.id}">${lb.name}</option>`).join('');
 
   showModal(`
     <h3><i class="ti ti-calendar-plus"></i> Eventos · ${formatDate(iso)}</h3>
     ${existing.length === 0 ? `<p class="text-mute text-sm">Nenhum evento neste dia ainda.</p>` : `
       <ul class="simple-list" style="margin-bottom:14px;">
-        ${existing.map(ev => `
+        ${existing.map(ev => {
+          const lb = ev.labelId ? labels.find(x => x.id === ev.labelId) : null;
+          return `
           <li>
             <span class="text">${ev.time?`<strong style="color:var(--amber)">${ev.time}</strong> · `:''}${escapeHtml(ev.title)}</span>
-            <span class="tag ${ev.type==='personal'?'personal':(ev.type==='partnership'||ev.type==='casalvintte'?'casalvintte':'')}">${ev.type}</span>
+            ${lb ? `<span style="font-size:9px;padding:2px 8px;border-radius:99px;background:${lb.color}20;color:${lb.color};border:1px solid ${lb.color}40;font-family:var(--font-mono);">${lb.name}</span>` : ''}
             <button class="btn-icon danger" onclick="deleteCalEvent('${kind}','${iso}','${ev.id}')"><i class="ti ti-trash"></i></button>
-          </li>`).join('')}
+          </li>`;}).join('')}
       </ul>
     `}
     <h4 style="margin:14px 0 10px; font-size:13px; font-weight:600;">Adicionar novo evento</h4>
     <div class="modal-field"><label>Título</label><input id="ev-title" placeholder="Ex: Parceria com café da galeria" /></div>
     <div class="modal-field"><label>Horário (opcional)</label><input id="ev-time" type="time" /></div>
     <div class="modal-field"><label>Tipo</label><select id="ev-type">${typeOptions}</select></div>
+    <div class="modal-field"><label>Etiqueta</label><select id="ev-label">${labelOptions}</select></div>
     <div class="modal-actions">
       <button class="btn ghost" onclick="closeModal()">Fechar</button>
       <button class="btn primary" onclick="saveCalEvent('${kind}','${iso}')"><i class="ti ti-check"></i>Adicionar</button>
@@ -3295,9 +3625,10 @@ function saveCalEvent(kind, iso) {
   if (!t) return;
   const time = document.getElementById('ev-time').value;
   const type = document.getElementById('ev-type').value;
+  const labelId = document.getElementById('ev-label').value;
   const events = kind === 'casalvintte' ? state.casalvintte.calendarEvents : state.generalEvents;
   if (!events[iso]) events[iso] = [];
-  events[iso].push({ id: uid(), title: t, time, type });
+  events[iso].push({ id: uid(), title: t, time, type, labelId: labelId || null });
   save();
   closeModal();
   renderCalendar(kind);
@@ -3973,6 +4304,7 @@ function importJSON(ev) {
    RENDER ALL (re-render completo após sync ou import)
    ============================================================ */
 function renderAll() {
+  setupFinMonth();
   renderDashboard();
   renderFinanceIndividual();
   renderFinanceCasal();
@@ -3986,6 +4318,7 @@ function renderAll() {
   renderCalendar('casalvintte');
   renderCalendar('general');
   renderUpcoming();
+  renderAllCalLabelPalettes();
   renderPersonList('duda','list-duda');
   renderPersonList('rafa','list-rafa');
   renderPersonList('joziana','list-joziana');
